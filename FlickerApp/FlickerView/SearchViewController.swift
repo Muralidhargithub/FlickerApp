@@ -21,6 +21,7 @@ class SearchViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.backButtonTitle = "Search Flickr"
         setupUI()
         setupBindings()
         setupCollectionViewLayout()

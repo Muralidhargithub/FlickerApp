@@ -7,9 +7,9 @@
 
 import UIKit
 
-//MARK: - Protocols
+// MARK: - Protocols
 protocol NetworkManaging {
-    func fetchData(for tags: String) async throws -> [FlickrImage]
+    func fetchData<T: Decodable>(for tags: String, decodingType: T.Type) async throws -> T
     func fetchImage(from url: URL) async throws -> UIImage
 }
 
@@ -22,26 +22,29 @@ final class NetworkManager: NetworkManaging {
         self.session = session
     }
 
-    //MARK: - Function to fetch Data
-    func fetchData(for tags: String) async throws -> [FlickrImage] {
+    // MARK: - Function to fetch Data
+    func fetchData<T: Decodable>(for tags: String, decodingType: T.Type) async throws -> T {
         guard let url = APIEndpoints.fetchPhotosURL(tags: tags) else {
-            throw NetworkError.invalidURL}
+            throw NetworkError.invalidURL
+        }
 
-        print("Fetching images from URL: \(url)")
+        print("Fetching data from URL: \(url)")
         let (data, _) = try await session.data(from: url)
 
         let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+
         do {
-            let response = try decoder.decode(FlickrResponse.self, from: data)
-            print("Fetched \(response.items.count) images from API")
-            return response.items
+            let decodedResponse = try decoder.decode(T.self, from: data)
+            print("Successfully decoded response")
+            return decodedResponse
         } catch {
             print("Decoding error: \(error)")
             throw NetworkError.decodingError
         }
     }
 
-    //MARK: - Function to fetch Images
+    // MARK: - Function to fetch Image
     func fetchImage(from url: URL) async throws -> UIImage {
         if let cachedImage = imageCache.object(forKey: url.absoluteString as NSString) {
             return cachedImage

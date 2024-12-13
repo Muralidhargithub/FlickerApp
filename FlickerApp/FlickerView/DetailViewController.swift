@@ -32,22 +32,20 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         configure(with: image)
+        setupNavigationBar()
     }
     
     private func setupUI() {
         view.backgroundColor = .systemBackground
         
-        // Image View
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Title Label
         titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
         titleLabel.numberOfLines = 0
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        // Description Label
         descriptionLabel.font = UIFont.preferredFont(forTextStyle: .body)
         descriptionLabel.numberOfLines = 0
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -67,7 +65,6 @@ class DetailViewController: UIViewController {
         
         view.addSubview(stackView)
         
-        // Layout Constraints
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -77,7 +74,6 @@ class DetailViewController: UIViewController {
     }
     
     private func configure(with image: FlickrImage) {
-        // Load Image
         if let url = URL(string: image.imageUrl) {
             Task {
                 do {
@@ -95,10 +91,29 @@ class DetailViewController: UIViewController {
             imageView.image = UIImage(systemName: "photo")
         }
         
-        titleLabel.text = "Title: \(image.title?.isEmpty == false ? image.title : "No Title Available")"
+        titleLabel.text = "Title: \(image.title ?? "No Title Available")"
         authorLabel.text = "Author: \(image.author?.isEmpty == false ? image.author! : "Unknown")"
         dateLabel.text = "Published: \(image.formattedDate)"
         descriptionLabel.text = "Description: \(image.description?.asPlainText() ?? "No Description Available")"
+    }
+}
+    
+extension DetailViewController {
+    private func setupNavigationBar() {
+        let shareButton = UIBarButtonItem(
+            image: UIImage(systemName: "square.and.arrow.up"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapShareButton)
+        )
+        navigationItem.rightBarButtonItem = shareButton
+    }
+    
+    @objc private func didTapShareButton() {
+        guard let image = imageView.image else {return}
+        
+        let activityVC = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        present(activityVC, animated: true)
     }
 }
 

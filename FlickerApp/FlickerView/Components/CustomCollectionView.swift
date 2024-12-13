@@ -26,7 +26,6 @@ class CustomCollectionView: UICollectionView {
     }
 
     private func setupUI() {
-//        self.backgroundColor = UIColor.systemGroupedBackground
         self.translatesAutoresizingMaskIntoConstraints = false
     }
 }

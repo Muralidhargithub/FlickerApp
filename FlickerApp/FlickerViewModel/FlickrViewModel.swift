@@ -28,7 +28,8 @@ class FlickrViewModel {
         Task {
             do {
                 print("Searching for: \(query)")
-                let images = try await networkManager.fetchData(for: query)
+                let response = try await networkManager.fetchData(for: query, decodingType: FlickrResponse.self)
+                let images = response.items
                 print("Fetched \(images.count) images for query: \(query)")
                 isLoading?(false)
                 updateImages?(images)

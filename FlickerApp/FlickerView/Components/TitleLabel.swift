@@ -13,17 +13,29 @@ class TitleLabel: UILabel {
         super.init(frame: frame)
         setupUI()
     }
-
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupUI()
     }
-
+    
     private func setupUI() {
-        self.text = "Flickr Search"
-        self.font = UIFont(name: "AvenirNext-Bold", size: 24)
-        self.textColor = .init(white: 4, alpha: 4)
         self.textAlignment = .center
         self.translatesAutoresizingMaskIntoConstraints = false
+        
+        let shadow = NSShadow()
+        shadow.shadowColor = UIColor.white
+            shadow.shadowBlurRadius = 2
+            shadow.shadowOffset = CGSize(width: 2, height: 2)
+        
+        let attributedText = NSMutableAttributedString(
+            string: "Flickr",
+            attributes: [
+                .font: UIFont(name: "Copperplate", size: 50) ?? UIFont.boldSystemFont(ofSize: 30),
+                .foregroundColor: UIColor.white,
+                .shadow: shadow
+            ]
+        )
+        self.attributedText = attributedText
     }
 }
