@@ -60,7 +60,7 @@ class DetailViewController: UIViewController {
         
         let stackView = UIStackView(arrangedSubviews: [imageView, titleLabel, descriptionLabel, authorLabel, dateLabel])
         stackView.axis = .vertical
-        stackView.spacing = 14
+        stackView.spacing = 10
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(stackView)
