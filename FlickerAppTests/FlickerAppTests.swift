@@ -5,32 +5,47 @@
 //  Created by Muralidhar reddy Kakanuru on 12/12/24.
 //
 
+
 import XCTest
 @testable import FlickerApp
 
 final class FlickerAppTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    private var viewModel: FlickrViewModel!
+        
+        override func setUp() {
+            super.setUp()
         }
-    }
+        
+        override func tearDown() {
+            viewModel = nil
+            super.tearDown()
+        }
+        
+        func testSearchImagesSuccess() async {
+            // Arrange
+            let testImages = [
+                FlickrImage(title: "Test Image 1", link: nil, media: Media(m: "https://example.com/image1.jpg"), dateTaken: nil, description: nil, published: nil, author: nil, authorID: nil, tags: nil),
+                FlickrImage(title: "Test Image 2", link: nil, media: Media(m: "https://example.com/image2.jpg"), dateTaken: nil, description: nil, published: nil, author: nil, authorID: nil, tags: nil)
+            ]
+            
+            viewModel = FlickrViewModel(networkManager: InlineNetworkManager(fetchDataHandler: { _ in
+                return testImages
+            }))
+            
+            let expectation = XCTestExpectation(description: "Images updated")
+            
+            viewModel.updateImages = { images in
+                XCTAssertEqual(images.count, 2)
+                XCTAssertEqual(images.first?.title, "Test Image 1")
+                expectation.fulfill()
+            }
+            
+            // Act
+            viewModel.searchImages(for: "nature")
+            
+            // Assert
+            wait(for: [expectation], timeout: 1.0)
+        }
 
 }

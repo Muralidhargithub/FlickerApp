@@ -8,20 +8,13 @@
 
 import Foundation
 
-enum Endpoint {
-    case searchImages(tags: String)
-
-    var url: URL? {
-        switch self {
-        case .searchImages(let tags):
-            let encodedTags = tags.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-            return URL(string: "\(Constants.API.baseURL)?format=json&nojsoncallback=1&tags=\(encodedTags)")
-        }
+struct APIEndpoints {
+    static let baseURL = "https://api.flickr.com/services/feeds/photos_public.gne"
+    
+    static func fetchPhotosURL(tags: String) -> URL? {
+        let encodedTags = tags.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let urlString = "\(baseURL)?format=json&nojsoncallback=1&tags=\(encodedTags)"
+        return URL(string: urlString)
     }
 }
 
-enum Constants {
-    enum API {
-        static let baseURL = "https://api.flickr.com/services/feeds/photos_public.gne"
-    }
-}

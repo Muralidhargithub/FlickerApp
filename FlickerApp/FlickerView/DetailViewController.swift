@@ -7,6 +7,8 @@
 
 
 import UIKit
+import Foundation
+
 
 class DetailViewController: UIViewController {
     private let imageView = UIImageView()
@@ -50,20 +52,17 @@ class DetailViewController: UIViewController {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        // Author Label
         authorLabel.font = UIFont.preferredFont(forTextStyle: .subheadline)
         authorLabel.textColor = .secondaryLabel
         authorLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        // Date Label
         dateLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
         dateLabel.textColor = .secondaryLabel
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        // Add Views
         let stackView = UIStackView(arrangedSubviews: [imageView, titleLabel, descriptionLabel, authorLabel, dateLabel])
         stackView.axis = .vertical
-        stackView.spacing = 16
+        stackView.spacing = 14
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(stackView)
@@ -96,10 +95,25 @@ class DetailViewController: UIViewController {
             imageView.image = UIImage(systemName: "photo")
         }
         
-        // Set Texts
-        titleLabel.text = image.title?.isEmpty == false ? image.title : "No Title Available"
-        descriptionLabel.text = image.description?.isEmpty == false ? image.description : "No Description Available"
+        titleLabel.text = "Title: \(image.title?.isEmpty == false ? image.title : "No Title Available")"
         authorLabel.text = "Author: \(image.author?.isEmpty == false ? image.author! : "Unknown")"
         dateLabel.text = "Published: \(image.formattedDate)"
+        descriptionLabel.text = "Description: \(image.description?.asPlainText() ?? "No Description Available")"
     }
 }
+
+//MARK: - To convert  HTML string to plain text.
+extension String {
+    func asPlainText() -> String {
+        guard let data = self.data(using: .utf8) else { return self }
+        if let attributedString = try? NSAttributedString(
+            data: data,
+            options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue],
+            documentAttributes: nil
+        ) {
+            return attributedString.string
+        }
+        return self
+    }
+}
+

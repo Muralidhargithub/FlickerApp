@@ -10,9 +10,9 @@ import Foundation
 
 class FlickrViewModel {
     private let networkManager: NetworkManaging
-    var isLoading: ((Bool) -> Void)?
-    var updateImages: (([FlickrImage]) -> Void)?
-    var showError: ((String) -> Void)?
+    var isLoading: ((Bool) -> ())?
+    var updateImages: (([FlickrImage]) -> ())?
+    var showError: ((String) -> ())?
 
     init(networkManager: NetworkManaging = NetworkManager.shared) {
         self.networkManager = networkManager
@@ -28,7 +28,7 @@ class FlickrViewModel {
         Task {
             do {
                 print("Searching for: \(query)")
-                let images = try await networkManager.fetchImages(for: query)
+                let images = try await networkManager.fetchData(for: query)
                 print("Fetched \(images.count) images for query: \(query)")
                 isLoading?(false)
                 updateImages?(images)

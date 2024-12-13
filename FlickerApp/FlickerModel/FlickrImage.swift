@@ -32,7 +32,6 @@ struct FlickrImage: Codable {
     let authorID: String?
     let tags: String?
 
-    // Mapping JSON keys to Swift property names
     enum CodingKeys: String, CodingKey {
         case title
         case link
@@ -45,7 +44,6 @@ struct FlickrImage: Codable {
         case tags
     }
 
-    // Helper for extracting the image URL from media
     var imageUrl: String {
         media.m
     }

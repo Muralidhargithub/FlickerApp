@@ -7,8 +7,9 @@
 
 import UIKit
 
+//MARK: - Protocols
 protocol NetworkManaging {
-    func fetchImages(for tags: String) async throws -> [FlickrImage]
+    func fetchData(for tags: String) async throws -> [FlickrImage]
     func fetchImage(from url: URL) async throws -> UIImage
 }
 
@@ -21,11 +22,10 @@ final class NetworkManager: NetworkManaging {
         self.session = session
     }
 
-    func fetchImages(for tags: String) async throws -> [FlickrImage] {
-        let encodedTags = tags.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        guard let url = URL(string: "https://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1&tags=\(encodedTags)") else {
-            throw NetworkError.invalidURL
-        }
+    //MARK: - Function to fetch Data
+    func fetchData(for tags: String) async throws -> [FlickrImage] {
+        guard let url = APIEndpoints.fetchPhotosURL(tags: tags) else {
+            throw NetworkError.invalidURL}
 
         print("Fetching images from URL: \(url)")
         let (data, _) = try await session.data(from: url)
@@ -41,8 +41,7 @@ final class NetworkManager: NetworkManaging {
         }
     }
 
-
-
+    //MARK: - Function to fetch Images
     func fetchImage(from url: URL) async throws -> UIImage {
         if let cachedImage = imageCache.object(forKey: url.absoluteString as NSString) {
             return cachedImage
